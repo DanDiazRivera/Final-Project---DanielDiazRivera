@@ -4,8 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - PickUp
-  - Enemy
+  - RubyController
+  - BackgroundMusic
   layers:
   - Default
   - TransparentFX
@@ -15,10 +15,10 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
-  - 
+  - Character
+  - Projectile
+  - Confiner
+  - NPC
   - 
   - 
   - 
