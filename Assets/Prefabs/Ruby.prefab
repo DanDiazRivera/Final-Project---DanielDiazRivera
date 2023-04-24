@@ -103,17 +103,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 3
   maxHealth: 5
-  winTextObject: {fileID: 0}
-  loseTextObject: {fileID: 0}
   projectilePrefab: {fileID: 5585288533233908021, guid: c3fc73d7c4cc0e7428ccbbc54a02a5be,
     type: 3}
+  endText: {fileID: 0}
   HealEffect: {fileID: 3737312766858011759, guid: c81d0a691e7d9994f8c141c651a07786,
     type: 3}
   HitEffect: {fileID: 5017124068895564403, guid: 5a627c820ec319644847dc5d3d8d9f2b,
     type: 3}
   score: {fileID: 0}
+  cogs: {fileID: 0}
   throwSound: {fileID: 8300000, guid: b2edfd40873655249ba0e01a5cf705be, type: 3}
   hitSound: {fileID: 8300000, guid: 9b1bb1f450b7d444fa4a8019d13519a7, type: 3}
+  dialogSound: {fileID: 8300000, guid: 060fbed4ebcc6dd4a8ac1c0875f4a738, type: 3}
   timeInvincible: 2
 --- !u!50 &2037110648168032501
 Rigidbody2D:

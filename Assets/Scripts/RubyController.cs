@@ -15,11 +15,13 @@ public class RubyController : MonoBehaviour
     public GameObject HitEffect;
     private int scoreValue = 0;
     public Text score;
+    public Text friendFound;
     public Text cogs;
     private int cogsValue = 4;
 
     public AudioClip throwSound;
     public AudioClip hitSound;
+    public AudioClip dialogSound;
     private BackgroundMusic bgMusic;
 
     public int health { get { return currentHealth; } }
@@ -30,6 +32,8 @@ public class RubyController : MonoBehaviour
     float invincibleTimer;
     bool gameOver = false;
     bool winFlag = false;
+    bool friendFlag = false;
+    bool spreadShotBuff = false;
     Rigidbody2D rigidbody2d;
     float horizontal;
     float vertical;
@@ -42,6 +46,11 @@ public class RubyController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (level == 1){
+            friendFound.text = "";
+        } else if (level == 2){
+            friendFound.text = "Friend Found: Incomplete";
+        }
         endText.text = "";
         score.text = "Robots Fixed: " + scoreValue.ToString() + "/4";
         cogs.text = "Cogs: " + cogsValue.ToString();
@@ -101,9 +110,11 @@ public class RubyController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.X) && gameOver == false)
         {
             RaycastHit2D hit = Physics2D.Raycast(rigidbody2d.position + Vector2.up * 0.2f, lookDirection, 1.5f, LayerMask.GetMask("NPC"));
+            RaycastHit2D hit1 = Physics2D.Raycast(rigidbody2d.position + Vector2.up * 0.2f, lookDirection, 1.5f, LayerMask.GetMask("Boy"));
+            RaycastHit2D hit2 = Physics2D.Raycast(rigidbody2d.position + Vector2.up * 0.2f, lookDirection, 1.5f, LayerMask.GetMask("Girl"));
             if (hit.collider != null)
             {
-                if (scoreValue == 4)
+                if (scoreValue == 4 && level == 1)
                 {
                     level = 2;
                     SceneManager.LoadScene("Level2");
@@ -113,6 +124,34 @@ public class RubyController : MonoBehaviour
                     if (character != null)
                     {
                         character.DisplayDialog();
+                        PlaySound(dialogSound);
+                    }
+                }
+            }
+            if (hit1.collider != null)
+            {
+                {
+                    NonPlayerCharacter character = hit1.collider.GetComponent<NonPlayerCharacter>();
+                    if (character != null)
+                    {
+                        character.DisplayDialog();
+                        PlaySound(dialogSound);
+                    }
+                    if (level == 2){
+                        friendFound.text = "Friend Found: Complete";
+                        friendFlag = true;
+                        ChangeScore(0);
+                    }
+                }
+            }
+            if (hit2.collider != null)
+            {
+                {
+                    NonPlayerCharacter character = hit2.collider.GetComponent<NonPlayerCharacter>();
+                    if (character != null)
+                    {
+                        character.DisplayDialog();
+                        PlaySound(dialogSound);
                     }
                 }
             }
@@ -162,7 +201,7 @@ public class RubyController : MonoBehaviour
         if (scoreValue == 4 && gameOver == false && level == 1){
             endText.text = "Talk to Jambi to visit stage two!";
         }
-        if(scoreValue == 4 && gameOver == false && level == 2){
+        if(scoreValue == 4 && gameOver == false && level == 2 && friendFlag == true){
             endText.text = "You Win! Game Created By: Daniel Diaz-Rivera.\nPress R to Return to Stage 1";
             winFlag = true;
             bgMusic.ChangeSound(1);
@@ -171,11 +210,18 @@ public class RubyController : MonoBehaviour
     public void ChangeCogs(int cogsAmount)
     {
         cogsValue += cogsAmount;
-        cogs.text = "Cogs: " + cogsValue.ToString();
+        if (spreadShotBuff == true){
+            cogs.text = "Spread Cogs: " + cogsValue.ToString();
+        } else {
+            cogs.text = "Cogs: " + cogsValue.ToString();
+        }
         GameObject projectileObject = Instantiate(HealEffect, rigidbody2d.position + Vector2.up * 0.5f, Quaternion.identity);
          
     }
-
+    public void PowerUp(){
+        spreadShotBuff = true;
+        cogs.text = "Spread Cogs: " + cogsValue.ToString();
+    }
     void Launch()
     {
         if(cogsValue > 0)
@@ -183,10 +229,22 @@ public class RubyController : MonoBehaviour
             GameObject projectileObject = Instantiate(projectilePrefab, rigidbody2d.position + Vector2.up * 0.5f, Quaternion.identity);
             Projectile projectile = projectileObject.GetComponent<Projectile>();
             projectile.Launch(lookDirection, 300);
+            if (spreadShotBuff == true){
+                GameObject projectileObject1 = Instantiate(projectilePrefab, rigidbody2d.position + Vector2.up * 0.5f, Quaternion.identity);
+                Projectile projectile1 = projectileObject1.GetComponent<Projectile>();
+                GameObject projectileObject2 = Instantiate(projectilePrefab, rigidbody2d.position + Vector2.up * 0.5f, Quaternion.identity);
+                Projectile projectile2 = projectileObject2.GetComponent<Projectile>();
+                projectile1.Launch(lookDirection, 250);
+                projectile2.Launch(lookDirection, 350);
+            }
             animator.SetTrigger("Launch");
             PlaySound(throwSound);
             cogsValue--;
-            cogs.text = "Cogs: " + cogsValue.ToString();
+            if (spreadShotBuff == true){
+                cogs.text = "Spread Cogs: " + cogsValue.ToString();
+            } else {
+                cogs.text = "Cogs: " + cogsValue.ToString();
+            }
         }
     }
 

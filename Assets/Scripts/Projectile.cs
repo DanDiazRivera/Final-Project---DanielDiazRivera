@@ -36,7 +36,6 @@ public class Projectile : MonoBehaviour
         {
             e2.Fix();
         }
-    
         Destroy(gameObject);
     }
 }
